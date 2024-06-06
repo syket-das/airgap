@@ -8,6 +8,9 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 import '../global.css';
+import * as ScreenOrientation from 'expo-screen-orientation';
+
+import { PaperProvider } from 'react-native-paper';
 
 // import '../tamagui-web.css';
 
@@ -35,6 +38,7 @@ export default function RootLayout() {
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
+      changeScreenOrientation();
     }
   }, [loaded]);
 
@@ -42,13 +46,21 @@ export default function RootLayout() {
     return null;
   }
 
+  async function changeScreenOrientation() {
+    await ScreenOrientation.lockAsync(
+      ScreenOrientation.OrientationLock.LANDSCAPE
+    );
+  }
+
   return (
-    <TamaguiProvider config={tamaguiConfig} defaultTheme={colorScheme}>
+    <TamaguiProvider config={tamaguiConfig} defaultTheme={colorScheme!}>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-        </Stack>
+        <PaperProvider>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="+not-found" />
+          </Stack>
+        </PaperProvider>
       </ThemeProvider>
     </TamaguiProvider>
   );
